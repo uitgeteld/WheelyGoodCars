@@ -1,79 +1,33 @@
-@extends('layouts.guest')
+<x-layout>
+    <h2>Inloggen bij WheelyGoodCars</h2>
+    <p>Of <a href="{{ route('register') }}">maak een nieuw account aan</a></p>
 
-@section('title', 'Inloggen')
+    @if ($errors->any())
+    <p style="color:red">{{ $errors->first() }}</p>
+    @endif
 
-@section('content')
-<div>
-    <div>
-        <div>
-            <h2>Inloggen bij WheelyGoodCars</h2>
-            <p>
-                Of
-                <a href="{{ route('register') }}>maak een nieuw account aan</a>
-            </p>
-        </div>
+    <form method="POST" action="{{ route('login') }}">
+        @csrf
 
-        <div>
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
+        <p>
+            <label for="email">E-mailadres</label><br>
+            <input id="email" name="email" type="email" autocomplete="email" required value="{{ old('email') }}" placeholder="voorbeeld@email.com">
+            @error('email') <br><span style="color:red">{{ $message }}</span> @enderror
+        </p>
 
-                @if ($errors->any())
-                    <div>
-                        <p>{{ $errors->first() }}</p>
-                    </div>
-                @endif
+        <p>
+            <label for="password">Wachtwoord</label><br>
+            <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Wachtwoord">
+            @error('password') <br><span style="color:red">{{ $message }}</span> @enderror
+        </p>
 
-                <div>
-                    <label for="email">E-mailadres</label>
-                    <div>
-                        <input 
-                            id="email" 
-                            name="email" 
-                            type="email" 
-                            autocomplete="email" 
-                            required 
-                            value="{{ old('email') }}"
-                            placeholder="voorbeeld@email.com"
-                        >
-                    </div>
-                    @error('email')
-                        <p>{{ $message }}</p>
-                    @enderror
-                </div>
+        <p>
+            <input id="remember" name="remember" type="checkbox">
+            <label for="remember">Onthoud mij</label>
+        </p>
 
-                <div>
-                    <label for="password">Wachtwoord</label>
-                    <div>
-                        <input 
-                            id="password" 
-                            name="password" 
-                            type="password" 
-                            autocomplete="current-password" 
-                            required 
-                            placeholder="password"
-                        >
-                    </div>
-                    @error('password')
-                        <p>{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <div>
-                        <input id="remember" name="remember" type="checkbox">
-                        <label for="remember">Onthoud mij</label>
-                    </div>
-
-                    <div>
-                        <a href="#">Wachtwoord vergeten?</a>
-                    </div>
-                </div>
-
-                <div>
-                    <button type="submit">Inloggen</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-@endsection
+        <p>
+            <button type="submit">Inloggen</button>
+        </p>
+    </form>
+</x-layout>

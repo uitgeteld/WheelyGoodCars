@@ -5,10 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Services\RdwService;
 
 // Home route - redirect authenticated users to cars, guests to login
+// Route::get('/', function () {
+//     return auth()->check() 
+//         ? redirect()->route('cars.index') 
+//         : redirect()->route('login');
+// })->name('home');
+
 Route::get('/', function () {
-    return auth()->check() 
-        ? redirect()->route('cars.index') 
-        : redirect()->route('login');
+    return view('index');
 })->name('home');
 
 // Authenticated routes for car management
