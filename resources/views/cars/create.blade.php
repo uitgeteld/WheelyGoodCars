@@ -1,6 +1,9 @@
 <x-layout>
+    <div class="h-1 bg-gray-200">
+        <div id="progress-bar" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%;"></div>
+    </div>
 
-    <div id="step1" class="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
+    <div id="step1" class="flex flex-col items-center justify-center min-h-[calc(100vh-4rem-25px)] ">
         <div class="inline-flex items-stretch border-4 border-black rounded-xl overflow-hidden font-black shadow-2xl">
             <div class="bg-blue-800 text-white px-2.5 flex items-center text-2xl font-bold tracking-widest">
                 NL
@@ -15,7 +18,7 @@
     </div>
 
     <div id="step2" style="display:none" class="p-6">
-        <h1 class="text-2xl font-bold mb-6">Nieuw aanbod</h1>
+        <h1 class="text-2xl font-bold mb-4">Nieuw aanbod</h1>
 
         <div class="mb-4 flex items-center gap-3">
             <div class="inline-flex items-stretch border-2 border-black rounded-md overflow-hidden font-black">
@@ -109,20 +112,25 @@
 
                 const car = data[0];
 
-                if (car.merk)               document.getElementById('make').value         = car.merk;
-                if (car.handelsbenaming)    document.getElementById('model').value        = car.handelsbenaming;
-                if (car.aantal_zitplaatsen) document.getElementById('seats').value        = car.aantal_zitplaatsen;
-                if (car.aantal_deuren)      document.getElementById('doors').value        = car.aantal_deuren;
-                if (car.massa_rijklaar)     document.getElementById('curbweight').value   = car.massa_rijklaar;
-                if (car.eerste_kleur)       document.getElementById('color').value        = car.eerste_kleur;
+                if (car.merk) document.getElementById('make').value = car.merk;
+                if (car.handelsbenaming) document.getElementById('model').value = car.handelsbenaming;
+                if (car.aantal_zitplaatsen) document.getElementById('seats').value = car.aantal_zitplaatsen;
+                if (car.aantal_deuren) document.getElementById('doors').value = car.aantal_deuren;
+                if (car.massa_rijklaar) document.getElementById('curbweight').value = car.massa_rijklaar;
+                if (car.eerste_kleur) document.getElementById('color').value = car.eerste_kleur;
                 if (car.datum_eerste_toelating) {
                     document.getElementById('production-year').value = car.datum_eerste_toelating.substring(0, 4);
                 }
 
-                document.getElementById('hidden-plate').value        = plate;
+                document.getElementById('hidden-plate').value = plate;
                 document.getElementById('display-plate').textContent = plate;
-                document.getElementById('step1').style.display       = 'none';
-                document.getElementById('step2').style.display       = '';
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = '';
+
+                document.getElementById('progress-bar').style.width = '50%';
+
+                attachProgressListeners();
+                updateProgress();
             } catch (error) {
                 errorEl.textContent = 'Er is een fout opgetreden. Probeer het opnieuw.' + error;
                 errorEl.style.display = '';
@@ -130,9 +138,29 @@
             }
         }
 
+        function updateProgress() {
+            const fields = ['make', 'model', 'seats', 'doors', 'curbweight', 'color', 'production-year', 'mileage', 'price'];
+            const filledCount = fields.filter(id => document.getElementById(id).value.trim() !== '').length;
+            const progressPercent = 50 + (filledCount / fields.length) * 50;
+            document.getElementById('progress-bar').style.width = Math.min(progressPercent, 100) + '%';
+        }
+
+        function attachProgressListeners() {
+            const fields = ['make', 'model', 'seats', 'doors', 'curbweight', 'color', 'production-year', 'mileage', 'price'];
+            fields.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('input', updateProgress);
+                    element.addEventListener('change', updateProgress);
+                }
+            });
+        }
+
         function prevStep() {
             document.getElementById('step2').style.display = 'none';
             document.getElementById('step1').style.display = '';
+
+            document.getElementById('progress-bar').style.width = '0%';
         }
     </script>
 </x-layout>
