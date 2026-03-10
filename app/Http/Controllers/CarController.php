@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Services\RdwService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class CarController extends Controller
@@ -13,11 +14,19 @@ class CarController extends Controller
      */
     public function index()
     {
-        $cars = Car::where('user_id', auth()->id())
+        $cars = Car::latest()->get();
+        return view('cars.index', compact('cars'));
+    }
+
+    /**
+     * Display the authenticated user's cars.
+     */
+    public function myListings()
+    {
+        $cars = Car::where('user_id', Auth::id())
             ->latest()
             ->get();
-
-        return view('cars.index', compact('cars'));
+        return view('cars.my', compact('cars'));
     }
 
     /**
@@ -26,55 +35,6 @@ class CarController extends Controller
     public function create()
     {
         return view('cars.create');
-    }
-
-    /**
-     * AJAX endpoint to check license plate via RDW API.
-     */
-    public function checkKenteken(Request $request)
-    {
-        $request->validate([
-            'license_plate' => 'required|string'
-        ]);
-
-        try {
-            $vehicle = RdwService::getByPlate($request->license_plate);
-
-            if (!$vehicle) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Kenteken niet gevonden in RDW database'
-                ], 404);
-            }
-
-            // Check if already listed by this user
-            $exists = Car::where('user_id', auth()->id())
-                ->where('license_plate', strtoupper($request->license_plate))
-                ->exists();
-
-            if ($exists) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Deze auto staat al in jouw aanbod'
-                ], 422);
-            }
-
-            return response()->json([
-                'success' => true,
-                'data' => $vehicle
-            ]);
-        } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Kan geen verbinding maken met de RDW server. Probeer het later opnieuw.'
-            ], 503);
-        } catch (\Exception $e) {
-            logger()->error('RDW API error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Er is een fout opgetreden. Probeer het later opnieuw.'
-            ], 500);
-        }
     }
 
     /**
@@ -91,11 +51,11 @@ class CarController extends Controller
             'production_year' => 'nullable|integer',
             'seats' => 'nullable|integer',
             'doors' => 'nullable|integer',
-            'weight' => 'nullable|integer',
+            'curbweight' => 'nullable|integer',
             'color' => 'nullable|string',
         ]);
 
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = Auth::id();
         $validated['license_plate'] = strtoupper($validated['license_plate']);
 
         Car::create($validated);
@@ -107,43 +67,17 @@ class CarController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        $car = Car::findOrFail($id);
-        return view('cars.show', compact('car'));
-    }
+    public function show(string $id) {}
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        $car = Car::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
-
-        return view('cars.edit', compact('car'));
-    }
+    public function edit(string $id) {}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        $car = Car::where('id', $id)
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
-
-        $validated = $request->validate([
-            'price' => 'required|numeric|min:0',
-            'mileage' => 'required|integer|min:0',
-        ]);
-
-        $car->update($validated);
-
-        return redirect()->route('cars.index')
-            ->with('success', 'Auto succesvol bijgewerkt!');
-    }
+    public function update(Request $request, string $id) {}
 
     /**
      * Remove the specified resource from storage.
@@ -151,12 +85,12 @@ class CarController extends Controller
     public function destroy(string $id)
     {
         $car = Car::where('id', $id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', Auth::id())
             ->firstOrFail();
 
         $car->delete();
 
-        return redirect()->route('cars.index')
+        return redirect()->route('cars.myListings')
             ->with('success', 'Auto succesvol verwijderd uit je aanbod!');
     }
 }
