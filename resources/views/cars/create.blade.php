@@ -5,7 +5,7 @@
             <div class="bg-blue-800 text-white px-2.5 flex items-center text-2xl font-bold tracking-widest">
                 NL
             </div>
-            <input id="license_plate" type="text" placeholder="AA-BB-12"
+            <input id="license_plate" type="text" placeholder="AA-BB-12" maxlength="6" required
                 class="bg-yellow-400 border-none outline-none text-4xl font-black uppercase tracking-widest w-125 px-4 py-3 text-black text-center">
             <div class="bg-blue-800 text-white px-5 flex items-center text-2xl font-bold cursor-pointer hover:bg-blue-900" onclick="nextStep()">
                 Go!
@@ -81,17 +81,53 @@
     </div>
 
     <script>
-        function nextStep() {
-            var plate = document.getElementById('license_plate').value.trim();
-            if (!plate) {
-                document.getElementById('step1-error').textContent = 'Voer een kenteken in.';
-                document.getElementById('step1-error').style.display = '';
+        async function nextStep() {
+            const plate = document.getElementById('license_plate').value.trim().replace(/-/g, '').toUpperCase();
+            const errorEl = document.getElementById('step1-error');
+            const goBtn = document.querySelector('#step1 .bg-blue-800.cursor-pointer');
+
+            errorEl.style.display = 'none';
+
+            if (!plate || plate.length < 6) {
+                errorEl.textContent = 'Voer een geldig kenteken in.';
+                errorEl.style.display = '';
                 return;
             }
-            document.getElementById('hidden-plate').value = plate;
-            document.getElementById('display-plate').textContent = plate;
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('step2').style.display = '';
+
+            goBtn.textContent = '...';
+
+            try {
+                const response = await axios.get(`https://opendata.rdw.nl/resource/m9d7-ebf2.json?kenteken=${plate}`);
+                const data = response.data;
+
+                if (!data || data.length === 0) {
+                    errorEl.textContent = 'Kenteken niet gevonden.';
+                    errorEl.style.display = '';
+                    goBtn.textContent = 'Go!';
+                    return;
+                }
+
+                const car = data[0];
+
+                if (car.merk)               document.getElementById('make').value         = car.merk;
+                if (car.handelsbenaming)    document.getElementById('model').value        = car.handelsbenaming;
+                if (car.aantal_zitplaatsen) document.getElementById('seats').value        = car.aantal_zitplaatsen;
+                if (car.aantal_deuren)      document.getElementById('doors').value        = car.aantal_deuren;
+                if (car.massa_rijklaar)     document.getElementById('curbweight').value   = car.massa_rijklaar;
+                if (car.eerste_kleur)       document.getElementById('color').value        = car.eerste_kleur;
+                if (car.datum_eerste_toelating) {
+                    document.getElementById('production-year').value = car.datum_eerste_toelating.substring(0, 4);
+                }
+
+                document.getElementById('hidden-plate').value        = plate;
+                document.getElementById('display-plate').textContent = plate;
+                document.getElementById('step1').style.display       = 'none';
+                document.getElementById('step2').style.display       = '';
+            } catch (error) {
+                errorEl.textContent = 'Er is een fout opgetreden. Probeer het opnieuw.' + error;
+                errorEl.style.display = '';
+                goBtn.textContent = 'Go!';
+            }
         }
 
         function prevStep() {
