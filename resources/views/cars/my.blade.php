@@ -23,7 +23,7 @@
                         </td>
 
                         <td class="text-left align-middle whitespace-nowrap w-px px-6 font-semibold">
-                            {{ $car->license_plate }}
+                            <a href="{{ route('cars.show', $car) }}">{{ $car->license_plate }}</a>
                         </td>
 
                         <td class=" text-left align-middle whitespace-nowrap w-px px-6 font-bold">
@@ -38,7 +38,7 @@
                             <form action="{{ route('cars.destroy', $car) }}" method="POST" class="inline" onsubmit="return confirm('Weet je zeker dat je deze auto wilt verwijderen?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="px-3 py-2 bg-red-600 hover:bg-red-700 hover:cursor-pointer text-white rounded text-sm">
+                                <button type="submit" class="px-3 py-2 bg-red-600 hover:bg-red-700 hover:cursor-pointer text-white text-sm">
                                     Verwijderen
                                 </button>
                             </form>

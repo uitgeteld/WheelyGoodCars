@@ -51,8 +51,8 @@
                     <input id="doors" name="doors" type="number" min="1" class="w-full border rounded px-3 py-2" required>
                 </div>
                 <div>
-                    <label for="curbweight" class="block font-semibold mb-1">Massa rijklaar</label>
-                    <input id="curbweight" name="curbweight" type="number" min="0" class="w-full border rounded px-3 py-2" required>
+                    <label for="weight" class="block font-semibold mb-1">Massa rijklaar</label>
+                    <input id="weight" name="weight" type="number" min="0" class="w-full border rounded px-3 py-2" required>
                 </div>
             </div>
 
@@ -116,7 +116,7 @@
                 if (car.handelsbenaming) document.getElementById('model').value = car.handelsbenaming;
                 if (car.aantal_zitplaatsen) document.getElementById('seats').value = car.aantal_zitplaatsen;
                 if (car.aantal_deuren) document.getElementById('doors').value = car.aantal_deuren;
-                if (car.massa_rijklaar) document.getElementById('curbweight').value = car.massa_rijklaar;
+                if (car.massa_rijklaar) document.getElementById('weight').value = car.massa_rijklaar;
                 if (car.eerste_kleur) document.getElementById('color').value = car.eerste_kleur;
                 if (car.datum_eerste_toelating) {
                     document.getElementById('production-year').value = car.datum_eerste_toelating.substring(0, 4);
@@ -139,14 +139,14 @@
         }
 
         function updateProgress() {
-            const fields = ['make', 'model', 'seats', 'doors', 'curbweight', 'color', 'production-year', 'mileage', 'price'];
+            const fields = ['make', 'model', 'seats', 'doors', 'weight', 'color', 'production-year', 'mileage', 'price'];
             const filledCount = fields.filter(id => document.getElementById(id).value.trim() !== '').length;
             const progressPercent = 50 + (filledCount / fields.length) * 50;
             document.getElementById('progress-bar').style.width = Math.min(progressPercent, 100) + '%';
         }
 
         function attachProgressListeners() {
-            const fields = ['make', 'model', 'seats', 'doors', 'curbweight', 'color', 'production-year', 'mileage', 'price'];
+            const fields = ['make', 'model', 'seats', 'doors', 'weight', 'color', 'production-year', 'mileage', 'price'];
             fields.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {

@@ -51,7 +51,7 @@ class CarController extends Controller
             'production_year' => 'nullable|integer',
             'seats' => 'nullable|integer',
             'doors' => 'nullable|integer',
-            'curbweight' => 'nullable|integer',
+            'weight' => 'nullable|integer',
             'color' => 'nullable|string',
         ]);
 
@@ -67,7 +67,10 @@ class CarController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id) {}
+    public function show(Car $car)
+    {
+        return view('cars.show', compact('car'));
+    }
 
     /**
      * Show the form for editing the specified resource.
