@@ -53,8 +53,8 @@
         setTimeout(() => {
             const views = "{{ $car->views }};"
             const message = views === 1 
-                ? `${views} persoon heeft deze pagina bekeken vandaag`
-                : `${views} personen hebben deze pagina bekeken vandaag`;
+                ? `${views} klant bekeek deze auto vandaag`
+                : `${views} klanten bekeken deze auto vandaag`;
             
             const toast = document.createElement('div');
             toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center justify-between gap-4';
