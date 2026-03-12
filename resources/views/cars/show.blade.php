@@ -48,4 +48,68 @@
             </div>
         </div>
     </div>
+
+    <script>
+        setTimeout(() => {
+            const views = "{{ $car->views }};"
+            const message = views === 1 
+                ? `${views} persoon heeft deze pagina bekeken vandaag`
+                : `${views} personen hebben deze pagina bekeken vandaag`;
+            
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center justify-between gap-4';
+            toast.style.animation = 'fadeIn 0.3s ease-in';
+            
+            const messageSpan = document.createElement('span');
+            messageSpan.textContent = message;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '✕';
+            closeBtn.className = 'text-white text-lg font-bold hover:opacity-70 cursor-pointer';
+            closeBtn.style.background = 'none';
+            closeBtn.style.border = 'none';
+            closeBtn.style.padding = '0';
+            closeBtn.style.marginLeft = '8px';
+            
+            toast.appendChild(messageSpan);
+            toast.appendChild(closeBtn);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                @keyframes fadeOut {
+                    from {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(toast);
+
+            let autoCloseTimeout = setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+
+            closeBtn.addEventListener('click', () => {
+                clearTimeout(autoCloseTimeout);
+                toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => toast.remove(), 300);
+            });
+        }, 10000);
+    </script>
 </x-layout>

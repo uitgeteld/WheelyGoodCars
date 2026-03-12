@@ -8,9 +8,9 @@
         <div class="grid grid-cols-4 gap-4">
             @foreach ($cars as $car)
             <a href="{{ route('cars.show', $car) }}" class="block border rounded-xs p-4 shadow hover:shadow-lg transition">
-                <div class="inline-flex items-stretch rounded-md overflow-hidden font-black mb-4">
+                <div class="w-full rounded-md overflow-hidden font-black mb-4">
                     @if ($car->image)
-                    <img src="{{ asset('storage/' . $car->image) }}" alt="{{ $car->make }} {{ $car->model }}" class="w-full h-full object-cover rounded">
+                    <img src="{{ asset('storage/' . $car->image) }}" alt="{{ $car->make }} {{ $car->model }}" class="w-full h-48 object-cover rounded">
                     @else
                     <span class="text-sm">Geen afbeelding</span>
                     @endif
@@ -18,8 +18,13 @@
                 <h2 class="text-lg font-semibold">{{ $car->make }} {{ $car->model }}</h2>
                 <p class="text-sm text-gray-600 font-semibold mb-2">{{ $car->production_year }}</p>
                 <h3 class="font-bold"> €{{ number_format($car->price, 2, ',', '.') }}</h3>
-                <p class="text-gray-800 mb-1">{{ $car->mileage }}km</p>
-
+                <div class="flex justify-between items-center">
+                    <p class="text-gray-800 mb-1">{{ $car->mileage }}km</p>
+                    <div class="flex items-center gap-1">
+                        <img src="{{ asset('images/eyeviews.png') }}" class="max-h-4">
+                        <p class="text-gray-800">{{ $car->views }}</p>
+                    </div>
+                </div>
             </a>
             @endforeach
         </div>

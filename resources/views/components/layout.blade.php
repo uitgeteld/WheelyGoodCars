@@ -8,8 +8,6 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<style>
-</style>
 
 <body class="bg-slate-100">
     <x-header />
