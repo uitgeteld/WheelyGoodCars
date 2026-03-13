@@ -15,7 +15,7 @@ class CarController extends Controller
      */
     public function index()
     {
-        $cars = Car::latest()->get();
+        $cars = Car::latest()->get()->where("sold_at", null);
         return view('cars.index', compact('cars'));
     }
 
@@ -90,7 +90,33 @@ class CarController extends Controller
      */
     public function update(Request $request, string $id) {}
 
-   
+    public function status(Request $request, string $id)
+    {
+        $car = Car::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if ($car->sold_at) {
+            $car->sold_at = null;
+            $message = 'Auto is weer beschikbaar voor verkoop!';
+        } else {
+            $car->sold_at = now();
+            $message = 'Auto succesvol gemarkeerd als verkocht!';
+        }
+
+        $car->save();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'sold' => (bool) $car->sold_at,
+                'message' => $message,
+            ]);
+        }
+
+        return redirect()->route('cars.myListings')
+            ->with('success', $message);
+    }
 
     /**
      * Remove the specified resource from storage.
