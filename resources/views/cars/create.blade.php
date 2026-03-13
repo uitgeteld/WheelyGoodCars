@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('cars.store') }}">
+        <form method="POST" action="{{ route('cars.store') }}" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="license_plate" id="hidden-plate">
 
@@ -75,6 +75,11 @@
             <div class="mb-4">
                 <label for="price" class="block font-semibold mb-1">Vraagprijs (€)</label>
                 <input id="price" name="price" type="number" min="0" step="0.01" class="w-full border rounded px-3 py-2" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="image" class="block font-semibold mb-1">Afbeelding</label>
+                <input id="image" name="image" type="file" accept="image/*" class="w-full border rounded px-3 py-2" required>
             </div>
 
             <div class="flex gap-2 mt-6">
@@ -139,14 +144,14 @@
         }
 
         function updateProgress() {
-            const fields = ['make', 'model', 'seats', 'doors', 'weight', 'color', 'production-year', 'mileage', 'price'];
+            const fields = ['make', 'model', 'seats', 'doors', 'weight', 'color', 'production-year', 'mileage', 'price', 'image'];
             const filledCount = fields.filter(id => document.getElementById(id).value.trim() !== '').length;
             const progressPercent = 50 + (filledCount / fields.length) * 50;
             document.getElementById('progress-bar').style.width = Math.min(progressPercent, 100) + '%';
         }
 
         function attachProgressListeners() {
-            const fields = ['make', 'model', 'seats', 'doors', 'weight', 'color', 'production-year', 'mileage', 'price'];
+            const fields = ['make', 'model', 'seats', 'doors', 'weight', 'color', 'production-year', 'mileage', 'price', 'image'];
             fields.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {

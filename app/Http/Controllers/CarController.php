@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Services\RdwService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 class CarController extends Controller
@@ -53,10 +54,16 @@ class CarController extends Controller
             'doors' => 'nullable|integer',
             'weight' => 'nullable|integer',
             'color' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $validated['user_id'] = Auth::id();
         $validated['license_plate'] = strtoupper($validated['license_plate']);
+        $validated['image'] = null;
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $validated['image'] = $request->file('image')->store('cars', 'public');
+        }
 
         Car::create($validated);
 
@@ -82,6 +89,8 @@ class CarController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id) {}
+
+   
 
     /**
      * Remove the specified resource from storage.

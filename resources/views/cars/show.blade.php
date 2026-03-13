@@ -51,7 +51,7 @@
 
     <script>
         setTimeout(() => {
-            const views = "{{ $car->views }};"
+            const views = "{{ $car->views }}"
             const message = views === 1 
                 ? `${views} klant bekeek deze auto vandaag`
                 : `${views} klanten bekeken deze auto vandaag`;
